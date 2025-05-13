@@ -1,0 +1,35 @@
+# superset
+apiVersion: v1
+kind: Pod
+metadata:
+  name: superset
+  labels:
+    app: superset
+spec:
+ containers:
+ - name: superset
+   image: amancevice/superset:latest
+   ports:
+   - containerPort: 8088
+   volumeMounts:
+   - name: superset-config-volume
+     mountPath: /etc/superset/superset_config.py
+ volumes:
+   - name: superset-config-volume
+     hostPath:
+       path: /mnt/superset/superset_config.py
+       type: File
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: superset-service
+spec:
+  selector:
+    app: superset
+  ports:
+    - protocol: TCP
+      port: 8088
+      targetPort: 8088  # The port on the container inside the pod
+  type: NodePort
+
